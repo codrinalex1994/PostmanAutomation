@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "61800f9b-baa4-44fd-80b5-70af16772294",
+		"name": "Schooltas API Acceptance Smoke 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a new reader",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e7e56473-8461-4505-816e-0c47a14b14c7",
+						"exec": [
+							"pm.environment.set(\"reader_title\",\"Test Postman Reader\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2bd97815-f536-4349-b1ea-1e798444fc1f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Title is correct\", function(){",
+							"    pm.expect(pm.response.json().title).to.equal(pm.environment.get(\"reader_title\"));",
+							"});",
+							"",
+							"pm.test(\"The reader subject is correct\", function () {",
+							"    pm.expect(pm.response.json().subject.id).to.eql(pm.environment.get(\"book_subject\"));",
+							"});",
+							"",
+							"pm.environment.set(\"reader_id\", pm.response.json().id);",
+							"",
+							"pm.environment.set(\"reader_ean\", pm.response.json().ean);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "{{admin_access_token}}",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "{{reader_title}}",
+							"type": "text"
+						},
+						{
+							"key": "subject",
+							"value": "{{book_subject}}",
+							"type": "text"
+						},
+						{
+							"key": "pdfFile",
+							"type": "file",
+							"src": ""
+						},
+						{
+							"key": "language",
+							"value": "{{language}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api-acc.schooltas.net/v1/readers?language={{language}}",
+					"protocol": "https",
+					"host": [
+						"api-acc",
+						"schooltas",
+						"net"
+					],
+					"path": [
+						"v1",
+						"readers"
+					],
+					"query": [
+						{
+							"key": "language",
+							"value": "{{language}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a reader",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c9c22992-724d-4ee9-ad06-cb401c2bf74a",
+						"exec": [
+							"pm.environment.set(\"reader_updated_title\",\"Test Postman Updated Reader\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ea9db71f-d53a-4a1e-bffa-5a5d662d058d",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"The updated reader title is correct\", function () {",
+							"    pm.expect(pm.response.json().title).to.eql(pm.environment.get(\"reader_updated_title\"));",
+							"});",
+							"",
+							"pm.test(\"The updated reader id is correct\", function () {",
+							"    pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"reader_id\"));",
+							"});",
+							"",
+							"pm.test(\"The updated reader ean is correct\", function () {",
+							"    pm.expect(pm.response.json().ean).to.eql(pm.environment.get(\"reader_ean\"));",
+							"});",
+							"",
+							"pm.test(\"The updated reader subject is correct\", function () {",
+							"    pm.expect(pm.response.json().subject.id).to.eql(pm.environment.get(\"book_updated_subject\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "{{admin_access_token}}",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"title\": \"{{reader_updated_title}}\",\r\n\t\"subject\": \"{{book_updated_subject}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://api-acc.schooltas.net/v1/readers/{{reader_id}}?language={{language}}",
+					"protocol": "https",
+					"host": [
+						"api-acc",
+						"schooltas",
+						"net"
+					],
+					"path": [
+						"v1",
+						"readers",
+						"{{reader_id}}"
+					],
+					"query": [
+						{
+							"key": "language",
+							"value": "{{language}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
